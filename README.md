@@ -1,147 +1,149 @@
-# End-to-End-Chest-Cancer-Classification-using-MLflow-DVC
+#Chest Cancer Classification Using MLflow and DVC
 
+This document provides an in-depth overview of a machine learning pipeline designed for the classification of chest cancer using **MLflow** and **DVC** (Data Version Control). The integration of these tools ensures a seamless workflow for reproducibility and model management in machine learning projects.
 
-## Workflows
+## Project Overview
+This project encompasses the following key objectives:
+- **Cancer Detection**: Utilize machine learning techniques to classify chest cancer from medical imaging data effectively.
+- **Pipeline Management**: Leverage DVC for version control and management of datasets and models.
+- **Experiment Tracking**: Employ MLflow to log experiments, track metrics, and manage model versions.
 
-1. Update config.yaml
-2. Update secrets.yaml [Optional]
-3. Update params.yaml
-4. Update the entity
-5. Update the configuration manager in src config
-6. Update the components
-7. Update the pipeline 
-8. Update the main.py
-9. Update the dvc.yaml
+## Workflow Steps
 
+### 1. Configuration File Updates
 
+To initiate the pipeline, it’s essential to configure several files appropriately:
 
+- **`config.yaml`**: Adjust settings such as input data paths, model specifications, and output directories. This file serves as a central configuration hub for various pipeline components.
+- **`secrets.yaml`** (Optional): For sensitive information such as API keys or passwords, use this file. This allows for better security management.
+- **`params.yaml`**: Modify hyperparameters related to model training and evaluation, such as the learning rate, batch size, and number of epochs.
 
+### 2. Define the Entity
+The entity typically refers to the project context in which the data is being processed. Ensure that you define the entity correctly as it can affect data lineage tracking in MLflow.
 
-## MLflow
+### 3. Update the Configuration Manager
+In the `src/config` directory, update the configuration manager to dynamically load configurations from the YAML files. This component allows the rest of the code to access these configurations seamlessly.
 
-- [Documentation](https://mlflow.org/docs/latest/index.html)
+### 4. Update the Components
+You may need to refine individual components of your pipeline, such as data loading, preprocessing, feature extraction, and model definition. Each component should be modular to facilitate reusability and testing.
 
-- [MLflow tutorial](https://youtube.com/playlist?list=PLkz_y24mlSJZrqiZ4_cLUiP0CBN5wFmTb&si=zEp_C8zLHt1DzWKK)
+### 5. Revise the Pipeline
+Ensure that the entire pipeline – data preparation, training, evaluation, and inference – is properly defined. This allows for easier debugging and validation. Utilize DVC commands to streamline this process.
 
-##### cmd
-- mlflow ui
+### 6. Edit `main.py`
+Make necessary adjustments to the main execution script that controls the flow of the application, including argument parsing for command-line interactions.
 
-### dagshub
-[dagshub](https://dagshub.com/)
+### 7. Update the `dvc.yaml`
+DVC uses this file to track the stages in your pipeline. Sync any changes made to the components of the pipeline with this configuration, ensuring all steps are covered and properly sequenced.
 
-MLFLOW_TRACKING_URI=https://dagshub.com/entbappy/chest-Disease-Classification-MLflow-DVC.mlflow \
-MLFLOW_TRACKING_USERNAME=entbappy \
-MLFLOW_TRACKING_PASSWORD=6824692c47a4545eac5b10041d5c8edbcef0 \
-python script.py
+## MLflow Integration
 
-Run this to export as env variables:
+### Key Features
+**MLflow** provides the following functionalities:
+- **Experiment Tracking**: Log various metrics during training, enabling you to compare different runs effortlessly.
+- **Model Registry**: Store, annotate, and access versions of models.
+- **Deployment**: Simplify the process of deploying models to various environments.
 
+### Useful Resources
+- **MLflow Documentation**: [Official Documentation](https://mlflow.org/docs/latest/index.html)
+- **MLflow Tutorial Series**: [YouTube MLflow Playlist](https://youtube.com/playlist?list=PLkz_y24mlSJZrqiZ4_cLUiP0CBN5wFmTb&si=zEp_C8zLHt1DzWKK)
+
+### Command to Launch MLflow UI
+To visualize your experiments, use the following command:
 ```bash
-
-export MLFLOW_TRACKING_URI=https://dagshub.com/entbappy/chest-Disease-Classification-MLflow-DVC.mlflow
-
-export MLFLOW_TRACKING_USERNAME=entbappy 
-
-export MLFLOW_TRACKING_PASSWORD=6824692c47a369aa6f9353c5b10041d5c8edbcef0
-
+mlflow ui
 ```
+Navigate to `http://localhost:5000` in your browser to access the MLflow UI.
 
+### DagsHub Integration
+To track MLflow experiments in DagsHub:
+```bash
+export MLFLOW_TRACKING_URI=https://dagshub.com/entbappy/chest-Disease-Classification-MLflow-DVC.mlflow
+export MLFLOW_TRACKING_USERNAME=entbappy 
+export MLFLOW_TRACKING_PASSWORD=6824692c47a4545eac5b10041d5c8edbcef0
+python script.py
+```
+This setup allows you to monitor and manage experiments remotely.
 
+### DVC Command Overview
+Key DVC commands to manage your workflow:
+1. **Initialize DVC**:
+   ```bash
+   dvc init
+   ```
+   This sets up a new DVC repository.
+   
+2. **Reproduce the DVC Pipeline**:
+   ```bash
+   dvc repro
+   ```
+   This command executes all the stages of your defined pipeline.
 
-### DVC cmd
+3. **Visualize the Pipeline**:
+   ```bash
+   dvc dag
+   ```
+   Generate a graphical representation of the pipeline stages and dependencies.
 
-1. dvc init
-2. dvc repro
-3. dvc dag
+## Understanding MLflow and DVC
 
+### MLflow
+MLflow is designed for:
+- **Production-Grade**: It supports the entire ML lifecycle.
+- **Experiment Tracking**: Easy logging and tagging of models.
+- **Flexible Deployment**: Facilitates smooth transitions from development to production.
 
-## About MLflow & DVC
+### DVC
+DVC serves as:
+- **Lightweight**: Ideal for rapid prototyping and proof of concept projects.
+- **Version Control**: Manage experiments and datasets efficiently.
+- **Pipeline Orchestration**: Create complex pipelines with minimal overhead.
 
-MLflow
+## AWS CI/CD Deployment Using GitHub Actions
 
- - Its Production Grade
- - Trace all of your expriements
- - Logging & taging your model
+### Steps for AWS Setup
 
+1. **Login to AWS**: Access the AWS Management Console.
+2. **Create an IAM User**:
+   - Assign necessary permissions.
+   - **EC2 Access** for managing your virtual machines.
+   - **ECR Access** for storing Docker images.
 
-DVC 
+3. **Establish an ECR Repository**: Save the repository URI (e.g., `566373416292.dkr.ecr.us-east-1.amazonaws.com/chicken`).
+   
+4. **Provision an EC2 Instance**: Deploy an Ubuntu instance to host your application.
 
- - Its very lite weight for POC only
- - lite weight expriements tracker
- - It can perform Orchestration (Creating Pipelines)
+5. **Install Docker on EC2**:
+   - Run updates:
+     ```bash
+     sudo apt-get update -y
+     sudo apt-get upgrade
+     ```
+   - Install Docker:
+     ```bash
+     curl -fsSL https://get.docker.com -o get-docker.sh
+     sudo sh get-docker.sh
+     sudo usermod -aG docker ubuntu
+     newgrp docker
+     ```
 
+6. **Configure EC2 for GitHub Actions**:
+   - Go to GitHub settings and set up a self-hosted runner under `Settings > Actions > Runners > New Self-Hosted Runner`. Follow the prompts to configure your runner.
 
+7. **Set Up GitHub Secrets**:
+   - Store sensitive information as secrets in your GitHub repository:
+     - `AWS_ACCESS_KEY_ID=<your_key>`
+     - `AWS_SECRET_ACCESS_KEY=<your_secret>`
+     - `AWS_REGION=us-east-1`
+     - `AWS_ECR_LOGIN_URI=<repository_uri>`
+     - `ECR_REPOSITORY_NAME=<repo_name>`
 
-# AWS-CICD-Deployment-with-Github-Actions
+### Deployment Process Summary
+- Build Docker images from your source code.
+- Push Docker images to ECR.
+- Launch the EC2 instance.
+- Pull Docker images from ECR to EC2.
+- Start your application in a Docker container on EC2.
 
-## 1. Login to AWS console.
-
-## 2. Create IAM user for deployment
-
-	#with specific access
-
-	1. EC2 access : It is virtual machine
-
-	2. ECR: Elastic Container registry to save your docker image in aws
-
-
-	#Description: About the deployment
-
-	1. Build docker image of the source code
-
-	2. Push your docker image to ECR
-
-	3. Launch Your EC2 
-
-	4. Pull Your image from ECR in EC2
-
-	5. Lauch your docker image in EC2
-
-	#Policy:
-
-	1. AmazonEC2ContainerRegistryFullAccess
-
-	2. AmazonEC2FullAccess
-
-	
-## 3. Create ECR repo to store/save docker image
-    - Save the URI: 566373416292.dkr.ecr.us-east-1.amazonaws.com/chicken
-
-	
-## 4. Create EC2 machine (Ubuntu) 
-
-## 5. Open EC2 and Install docker in EC2 Machine:
-	
-	
-	#optinal
-
-	sudo apt-get update -y
-
-	sudo apt-get upgrade
-	
-	#required
-
-	curl -fsSL https://get.docker.com -o get-docker.sh
-
-	sudo sh get-docker.sh
-
-	sudo usermod -aG docker ubuntu
-
-	newgrp docker
-	
-# 6. Configure EC2 as self-hosted runner:
-    setting>actions>runner>new self hosted runner> choose os> then run command one by one
-
-
-# 7. Setup github secrets:
-
-    AWS_ACCESS_KEY_ID=
-
-    AWS_SECRET_ACCESS_KEY=
-
-    AWS_REGION = us-east-1
-
-    AWS_ECR_LOGIN_URI = demo>>  566373416292.dkr.ecr.ap-south-1.amazonaws.com
-
-    ECR_REPOSITORY_NAME = simple-app
-
+## Conclusion
+By following this guide, you will set up a comprehensive machine learning pipeline for chest cancer classification that integrates effective version control and experiment tracking practices. This robust framework allows for continuous improvement and deployment of your machine learning models, ensuring that your results are reproducible and easily manageable.
